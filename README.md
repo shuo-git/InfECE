@@ -19,7 +19,7 @@ Download the TER tool from http://www.cs.umd.edu/%7Esnover/tercom/. We use TER l
 
 ## Usage
 
-1) Set the necessary paths in `run.sh`
+1. Set the necessary paths in `run.sh`:
 
 ```shell
 CODE=Path_to_InfECE
@@ -29,7 +29,7 @@ hyp=Path_to_hypothesis
 vocab=Path_to_target_side_vocabulary
 ```
 
-2) Run `run.sh`
+2. Run `run.sh` to calculate the inference ECE:
 
 ```shell
 ./run.sh
