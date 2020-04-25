@@ -9,7 +9,15 @@
 
 ## Introduction
 
-This is the implementation of our work 'On the Inference Calibration of Neural Machine Translation' (ACL 2020).
+This is the implementation of our work 'On the Inference Calibration of Neural Machine Translation'.
+
+<pre><code>@inproceedings{Wang:2020:ACL,
+    title = "On the Inference Calibration of Neural Machine Translation",
+    author = "Wang, Shuo and Tu, Zhaopeng and Shi, Shuming and Liu, Yang",
+    booktitle = "ACL",
+    year = "2020"
+}
+</code></pre>
 
 ## Prerequisites
 
