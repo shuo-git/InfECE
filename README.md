@@ -37,12 +37,25 @@ hyp=Path_to_hypothesis
 vocab=Path_to_target_side_vocabulary
 ```
 
+Note that you need to save the token-level probabilities of  `${hyp}` in the file `${hyp}.conf`, here is an example:
+
+```
+# hyp
+I like music .
+Do you like music ?
+```
+
+```
+# hyp.conf
+0.3 0.4 0.5 0.6
+0.2 0.3 0.4 0.5 0.6
+```
+
 2. Run `run.sh` to calculate the inference ECE:
 
 ```shell
 ./run.sh
 ```
-
 
 ## Contact
 
