@@ -63,8 +63,7 @@ def calculate_ece(emtrx, cmtrx):
 
 
 def calculate_token_ece(emtrx, cmtrx):
-    token_count = cmtrx + (cmtrx == 0).astype(float) * 1e-10
-    return np.sum(np.abs(emtrx)) / token_count
+    return np.sum(np.abs(emtrx)) / np.sum(token_count)
 
 
 def main(args):
