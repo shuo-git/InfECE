@@ -67,10 +67,10 @@ def main(args):
     trans = file2words(args.trans, chain=True)
     label = file2words(args.label, chain=True)
 
-    prob = list(map(float, prob))
+    prob = [np.exp(float(p)) for p in prob]
     float_label = []
     for ll in label:
-        if ll == 'C' or ll == '1':
+        if ll == 'C' or ll == '1' or ll == '1.0':
             float_label.append(1.0)
         else:
             float_label.append(0.0)
@@ -82,9 +82,7 @@ def main(args):
 
     infece = calculate_ece(err_mtrx, count_mtrx)
 
-    print("Inference ECE  : {:.4f}".format(infece))
-    print("Avg Confidence : {:.4f}".format(np.mean(prob)))
-    print("Avg Accuracy   : {:.4f}".format(np.mean(float_label)))
+    print("{:.4f}\t{:.4f}\t{:.4f}".format(infece, np.mean(prob), np.mean(float_label)))
 
 
 if __name__ == '__main__':
