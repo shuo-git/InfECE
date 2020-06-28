@@ -62,6 +62,11 @@ def calculate_ece(emtrx, cmtrx):
     return np.sum(np.abs(np.sum(emtrx, axis=1))) / np.sum(cmtrx)
 
 
+def calculate_token_ece(emtrx, cmtrx):
+    token_count = cmtrx + (cmtrx == 0).astype(float) * 1e-10
+    return np.sum(np.abs(emtrx)) / token_count
+
+
 def main(args):
     prob = file2words(args.prob, chain=True)
     trans = file2words(args.trans, chain=True)
@@ -81,8 +86,9 @@ def main(args):
                                                    float_label, vocab, bins=args.bins)
 
     infece = calculate_ece(err_mtrx, count_mtrx)
+    token_ece = calculate_token_ece(err_mtrx, count_mtrx)
 
-    print("{:.4f}\t{:.4f}\t{:.4f}".format(infece, np.mean(prob), np.mean(float_label)))
+    print("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(infece, token_ece, np.mean(prob), np.mean(float_label)))
 
 
 if __name__ == '__main__':
