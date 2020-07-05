@@ -61,11 +61,12 @@ def extract_bin_info(hmtrx, cmtrx):
     :param cmtrx: np.array(bins, vocab_size)
     :return: acc_list, gap_list, count_list
 	"""
-	count_list = np.sum(cmtrx, axis=1).tolist()
+	count_array = np.sum(cmtrx, axis=1)
+	count_list = count_array.tolist()
 	acc_list = (np.sum(hmtrx, axis=1) / count_array).tolist()
 	bins = len(count_list)
 	bin_width = 1.0 / bins
 	prob_list = [bin_width / 2 + bin_width * i for i in range(bins)]
 	gap_list = [p - a for p, a in zip(prob_list, acc_list)]
-	
+
 	return acc_list, gap_list, count_list
