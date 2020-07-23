@@ -55,6 +55,15 @@ def calculate_token_ece(emtrx, cmtrx):
     return np.sum(np.abs(emtrx)) / np.sum(cmtrx)
 
 
+def calculate_sharpness(hmtrx, cmtrx):
+    avg_acc = np.sum(hmtrx) / np.sum(cmtrx)
+    acc_array = np.sum(hmtrx, axis=1)
+    cnt_array = np.sum(cmtrx, axis=1)
+    acc_array = acc_array / (cnt_array + 1e-9)
+    prop_array = cnt_array / np.sum(cnt_array)
+    return np.sum((acc_array - avg_acc) * (acc_array - avg_acc) * prop_array)
+
+
 def extract_bin_info(hmtrx, cmtrx):
 	"""
 	:param hmtrx: np.array(bins, vocab_size)
