@@ -31,7 +31,8 @@ def main(args):
     data = list(zip(indices, probs, accs))
     data.sort(key=lambda x: x[0])
     indices, probs, accs = list(zip(*data))
-    total_accs = itertools.chain(*accs)
+    total_accs = list(itertools.chain(*accs))
+    total_accs = [float(x) for x in total_accs]
     print(np.mean(total_accs))
 
 
