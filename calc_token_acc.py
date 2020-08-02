@@ -26,8 +26,8 @@ def main(args):
     lines = file2lines(args.input)
     lines = [l.split('|||') for l in lines]
     indices = [int(l[0]) for l in lines]
-    probs = [delete_pad(l[1].split()[:-1]) for l in lines]
-    accs = [delete_pad(l[2].split()[:-1]) for l in lines]
+    probs = [delete_pad(l[1].split())[:-1] for l in lines]
+    accs = [delete_pad(l[2].split())[:-1] for l in lines]
     # data = list(zip(indices, probs, accs))
     # data.sort(key=lambda x: x[0])
     # indices, probs, accs = list(zip(*data))
