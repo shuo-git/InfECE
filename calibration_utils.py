@@ -114,18 +114,21 @@ def calculate_sharpness(hmtrx, cmtrx):
     return np.sum((acc_array - avg_acc) * (acc_array - avg_acc) * prop_array)
 
 
-def extract_bin_info(hmtrx, cmtrx):
-	"""
-	:param hmtrx: np.array(bins, vocab_size)
+def extract_bin_info(hmtrx, cmtrx, pmtrx=None):
+    """
+    :param hmtrx: np.array(bins, vocab_size)
     :param cmtrx: np.array(bins, vocab_size)
     :return: acc_list, gap_list, count_list
-	"""
-	count_array = np.sum(cmtrx, axis=1)
-	count_list = count_array.tolist()
-	acc_list = (np.sum(hmtrx, axis=1) / count_array).tolist()
-	bins = len(count_list)
-	bin_width = 1.0 / bins
-	prob_list = [bin_width / 2 + bin_width * i for i in range(bins)]
-	gap_list = [p - a for p, a in zip(prob_list, acc_list)]
+    """
+    count_array = np.sum(cmtrx, axis=1)
+    count_list = count_array.tolist()
+    acc_list = (np.sum(hmtrx, axis=1) / count_array).tolist()
+    if pmtrx is not None:
+        prob_list = (np.sum(pmtrx, axis=1) / count_array).tolist()
+    else:
+        bins = len(count_list)
+        bin_width = 1.0 / bins
+        prob_list = [bin_width / 2 + bin_width * i for i in range(bins)]
+    gap_list = [p - a for p, a in zip(prob_list, acc_list)]
 
-	return acc_list, gap_list, count_list
+    return acc_list, gap_list, count_list
