@@ -32,16 +32,16 @@ def main(args):
     vocab = load_vocab(args.vocabulary)
 
     if args.partition == "uniform":
-        err_mtrx, hit_mtrx, _, count_mtrx = error_matrix_uniform(prob, trans, float_label, vocab, bins=args.bins)
+        err_mtrx, hit_mtrx, prob_mtrx, count_mtrx = error_matrix_uniform(prob, trans, float_label, vocab, bins=args.bins)
     elif args.partition == "balanced":
-        err_mtrx, hit_mtrx, _, count_mtrx, prob_bounds = error_matrix_balanced(prob, trans, float_label, vocab, bins=args.bins)
+        err_mtrx, hit_mtrx, prob_mtrx, count_mtrx, prob_bounds = error_matrix_balanced(prob, trans, float_label, vocab, bins=args.bins)
 
     ece = calculate_ece(err_mtrx, count_mtrx)
     sharp = calculate_sharpness(hit_mtrx, count_mtrx)
 
     print("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(ece, sharp, np.mean(prob), np.mean(float_label)))
 
-    acc_list, gap_list, count_list = extract_bin_info(hit_mtrx, count_mtrx)
+    acc_list, gap_list, count_list = extract_bin_info(hit_mtrx, count_mtrx, prob_mtrx)
 
     for i in range(args.bins):
         print("{:.4f}\t{:.4f}\t{:.4f}\t{}".format(acc_list[i], gap_list[i], prob_bounds[i], count_list[i]))
