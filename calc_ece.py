@@ -39,8 +39,9 @@ def main(args):
     ece = calculate_ece(err_mtrx, count_mtrx)
     # token_ece = calculate_token_ece(err_mtrx, count_mtrx)
     sharp = calculate_sharpness(hit_mtrx, count_mtrx)
+    var_gap = calculate_sharpness(err_mtrx, count_mtrx)
 
-    print("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(ece, sharp, np.mean(prob), np.mean(float_label)))
+    print("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(ece, sharp, var_gap, np.mean(prob), np.mean(float_label)))
 
 
 if __name__ == '__main__':
