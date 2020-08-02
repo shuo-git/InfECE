@@ -12,6 +12,7 @@ def parse_args():
     parser.add_argument("--label", default="label.txt")
     parser.add_argument("--vocabulary", default="vocab.en.txt")
     parser.add_argument("--bins", type=int, default=10)
+    parser.add_argument("--partition", default="uniform")
 
     return parser.parse_args()
 
@@ -30,16 +31,20 @@ def main(args):
             float_label.append(0.0)
     vocab = load_vocab(args.vocabulary)
 
-    err_mtrx, hit_mtrx, _, count_mtrx = error_matrix(prob, trans, float_label, vocab, bins=args.bins)
+    if args.partition == "uniform":
+        err_mtrx, hit_mtrx, _, count_mtrx = error_matrix_uniform(prob, trans, float_label, vocab, bins=args.bins)
+    elif args.partition == "balanced":
+        err_mtrx, hit_mtrx, _, count_mtrx, prob_bounds = error_matrix_balanced(prob, trans, float_label, vocab, bins=args.bins)
 
-    infece = calculate_ece(err_mtrx, count_mtrx)
+    ece = calculate_ece(err_mtrx, count_mtrx)
+    sharp = calculate_sharpness(hit_mtrx, count_mtrx)
 
-    print("{:.4f}\t{:.4f}\t{:.4f}".format(infece, np.mean(prob), np.mean(float_label)))
+    print("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(ece, sharp, np.mean(prob), np.mean(float_label)))
 
     acc_list, gap_list, count_list = extract_bin_info(hit_mtrx, count_mtrx)
 
     for i in range(args.bins):
-        print("{:.4f}\t{:.4f}\t{}".format(acc_list[i], gap_list[i], count_list[i]))
+        print("{:.4f}\t{:.4f}\t{:.4f}\t{}".format(acc_list[i], gap_list[i], prob_bounds[i], count_list[i]))
 
 
 if __name__ == '__main__':

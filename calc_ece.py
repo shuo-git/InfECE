@@ -12,6 +12,7 @@ def parse_args():
     parser.add_argument("--label", default="label.txt")
     parser.add_argument("--vocabulary", default="vocab.en.txt")
     parser.add_argument("--bins", type=int, default=20)
+    parser.add_argument("--partition", default="uniform")
 
     return parser.parse_args()
 
@@ -30,13 +31,16 @@ def main(args):
             float_label.append(0.0)
     vocab = load_vocab(args.vocabulary)
 
-    err_mtrx, hit_mtrx, _, count_mtrx = error_matrix(prob, trans, float_label, vocab, bins=args.bins)
+    if args.partition == "uniform":
+        err_mtrx, hit_mtrx, _, count_mtrx = error_matrix_uniform(prob, trans, float_label, vocab, bins=args.bins)
+    elif args.partition == "balanced":
+        err_mtrx, hit_mtrx, _, count_mtrx, _ = error_matrix_balanced(prob, trans, float_label, vocab, bins=args.bins)
 
-    infece = calculate_ece(err_mtrx, count_mtrx)
+    ece = calculate_ece(err_mtrx, count_mtrx)
     # token_ece = calculate_token_ece(err_mtrx, count_mtrx)
     sharp = calculate_sharpness(hit_mtrx, count_mtrx)
 
-    print("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(infece, sharp, np.mean(prob), np.mean(float_label)))
+    print("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(ece, sharp, np.mean(prob), np.mean(float_label)))
 
 
 if __name__ == '__main__':

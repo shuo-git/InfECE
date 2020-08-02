@@ -28,9 +28,9 @@ def main(args):
     indices = [int(l[0]) for l in lines]
     probs = [delete_pad(l[1].split()) for l in lines]
     accs = [delete_pad(l[2].split()) for l in lines]
-    data = list(zip(indices, probs, accs))
-    data.sort(key=lambda x: x[0])
-    indices, probs, accs = list(zip(*data))
+    # data = list(zip(indices, probs, accs))
+    # data.sort(key=lambda x: x[0])
+    # indices, probs, accs = list(zip(*data))
     total_accs = list(itertools.chain(*accs))
     total_accs = [float(x) for x in total_accs]
     print(np.mean(total_accs))
