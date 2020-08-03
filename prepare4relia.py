@@ -45,7 +45,10 @@ def main(args):
     acc_list, gap_list, count_list = extract_bin_info(hit_mtrx, count_mtrx, prob_mtrx)
 
     for i in range(args.bins):
-        print("{:.4f}\t{:.4f}\t{:.4f}\t{}".format(acc_list[i], gap_list[i], prob_bounds[i], count_list[i]))
+        if args.partition == "uniform":
+            print("{:.4f}\t{:.4f}\t{}".format(acc_list[i], gap_list[i], count_list[i]))
+        elif args.partition == "balanced":
+            print("{:.4f}\t{:.4f}\t{:.4f}\t{}".format(acc_list[i], gap_list[i], prob_bounds[i], count_list[i]))
 
 
 if __name__ == '__main__':
