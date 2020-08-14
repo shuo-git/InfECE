@@ -47,7 +47,7 @@ def main(args):
     ngram_list = list(zip(*all_labels_list))
     for i in range(args.n):
         temp_list = ngram_list[i]
-        fw = open(args.out_prefix + '%dgram' % i)
+        fw = open(args.out_prefix + '.%dgram' % i, 'w')
         out_list = [' '.join(list(map(str, l))) + '\n' for l in temp_list]
         fw.writelines(out_list)
         fw.close()
