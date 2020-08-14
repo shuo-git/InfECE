@@ -45,7 +45,7 @@ def main(args):
             item = str(labels_list[0][i])
             for j in range(1, args.n):
                 if j > i:
-                    break
+                    item += ':%d' % 0
                 else:
                     item += ':%d' % labels_list[j][i-j]
             if i == 0:
