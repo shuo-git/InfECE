@@ -10,7 +10,7 @@ def parse_args():
     parser.add_argument("--hyp", default="hyp.txt")
     parser.add_argument("--ref", default="ref.txt")
     parser.add_argument("--n", type=int, default=4)
-    parser.add_argument("--output", default="output.txt")
+    parser.add_argument("--out_prefix", default="output.txt")
 
     return parser.parse_args()
 
@@ -18,6 +18,8 @@ def parse_args():
 def label_n_gram(reference, hypothesis, n):
     ref_n_grams = Counter(ngrams(reference, n)) if len(reference) >= n else Counter()
     labels = []
+    for i in range(n - 1):
+        labels.append(0)
     for i in range(0, len(hypothesis) - n + 1):
         pattern = tuple(hypothesis[i:i+n])
         if ref_n_grams[pattern] > 0:
@@ -38,22 +40,17 @@ def label_sentence(reference, hypothesis, n):
 def main(args):
     hyps = file2words(args.hyp)
     refs = file2words(args.ref)
-    fw = open(args.output, 'w')
+    all_labels_list = []
     for hyp, ref in zip(hyps, refs):
         labels_list = label_sentence(ref, hyp, args.n)
-        for i in range(len(hyp)):
-            item = str(labels_list[0][i])
-            for j in range(1, args.n):
-                if j > i:
-                    item += ':%d' % 0
-                else:
-                    item += ':%d' % labels_list[j][i-j]
-            if i == 0:
-                fw.write(item)
-            else:
-                fw.write(' ' + item)
-        fw.write('\n')
-    fw.close()
+        all_labels_list.append(labels_list)
+    ngram_list = list(zip(*all_labels_list))
+    for i in range(args.n):
+        temp_list = ngram_list[i]
+        fw = open(args.out_prefix + '%dgram' % i)
+        out_list = [' '.join(list(map(str, l))) + '\n' for l in temp_list]
+        fw.writelines(out_list)
+        fw.close()
 
 
 if __name__ == '__main__':
