@@ -17,9 +17,11 @@ def parse_args():
 
 def label_n_gram(reference, hypothesis, n):
     ref_n_grams = Counter(ngrams(reference, n)) if len(reference) >= n else Counter()
-    labels = []
-    for i in range(n - 1):
-        labels.append(0)
+    
+    if len(hypothesis) < n:
+        return [0 for _ in range(len(hypothesis))]
+
+    labels = [0 for _ in range(n-1)]
     for i in range(0, len(hypothesis) - n + 1):
         pattern = tuple(hypothesis[i:i+n])
         if ref_n_grams[pattern] > 0:
