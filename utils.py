@@ -3,24 +3,24 @@ import itertools
 
 
 def file2lines(filename):
-    with codecs.open(filename, 'r', 'utf-8') as fr:
+    with open(filename, 'r') as fr:
         lines = fr.readlines()
 
     return lines
 
 
+def lines2file(lines, filename):
+    with open(filename, 'w') as fw:
+        fw.writelines(lines)
+
+
 def file2words(filename, chain=False):
-    with codecs.open(filename, 'r', 'utf-8') as fr:
+    with open(filename, 'r') as fr:
         lines = fr.readlines()
         lines = list(map(lambda x: x.split(), lines))
         if chain:
             lines = list(itertools.chain(*lines))
     return lines
-
-
-def lines2file(lines, filename):
-    with codecs.open(filename, 'w', 'utf-8') as fw:
-        fw.writelines(lines)
 
 
 def words2file(lines, filename):
