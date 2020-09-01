@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 from utils import *
 
 
@@ -98,17 +99,27 @@ def error_matrix_balanced(prob_list, token_list, label_list, vocab, **kwargs):
 
 
 def calculate_ece(emtrx, cmtrx):
-    return np.sum(np.abs(np.sum(emtrx, axis=1))) / np.sum(cmtrx)
+    if emtrx.ndim == 1:
+        return np.sum(np.abs(emtrx)) / np.sum(cmtrx)
+    else:
+        return np.sum(np.abs(np.sum(emtrx, axis=1))) / np.sum(cmtrx)
 
 
 def calculate_token_ece(emtrx, cmtrx):
+    assert emtrx.ndim == 2
     return np.sum(np.abs(emtrx)) / np.sum(cmtrx)
 
 
 def calculate_sharpness(hmtrx, cmtrx):
     avg_acc = np.sum(hmtrx) / np.sum(cmtrx)
-    acc_array = np.sum(hmtrx, axis=1)
-    cnt_array = np.sum(cmtrx, axis=1)
+    if hmtrx.ndim == 1:
+        acc_array = copy.deepcopy(hmtrx)
+    else:
+        acc_array = np.sum(hmtrx, axis=1)
+    if cmtrx.ndim == 1:
+        cnt_array = copy.deepcopy(cmtrx)
+    else:
+        cnt_array = np.sum(cmtrx, axis=1)
     acc_array = acc_array / (cnt_array + 1e-9)
     prop_array = cnt_array / np.sum(cnt_array)
     return np.sum((acc_array - avg_acc) * (acc_array - avg_acc) * prop_array)
@@ -116,15 +127,24 @@ def calculate_sharpness(hmtrx, cmtrx):
 
 def extract_bin_info(hmtrx, cmtrx, pmtrx=None):
     """
-    :param hmtrx: np.array(bins, vocab_size)
-    :param cmtrx: np.array(bins, vocab_size)
+    :param hmtrx: np.array(bins, vocab_size) or np.array(bins,)
+    :param cmtrx: np.array(bins, vocab_size) or np.array(bins,)
     :return: acc_list, gap_list, count_list
     """
-    count_array = np.sum(cmtrx, axis=1)
+    if cmtrx.ndim == 1:
+        count_array = copy.deepcopy(cmtrx)
+    else:
+        count_array = np.sum(cmtrx, axis=1)
     count_list = count_array.tolist()
-    acc_list = (np.sum(hmtrx, axis=1) / count_array).tolist()
+    if hmtrx.ndim == 1:
+        acc_list = (hmtrx / count_array).tolist()
+    else:
+        acc_list = (np.sum(hmtrx, axis=1) / count_array).tolist()
     if pmtrx is not None:
-        prob_list = (np.sum(pmtrx, axis=1) / count_array).tolist()
+        if pmtrx.ndim == 1:
+            prob_list = (pmtrx / count_array).tolist()
+        else:
+            prob_list = (np.sum(pmtrx, axis=1) / count_array).tolist()
     else:
         bins = len(count_list)
         bin_width = 1.0 / bins
@@ -132,3 +152,41 @@ def extract_bin_info(hmtrx, cmtrx, pmtrx=None):
     gap_list = [p - a for p, a in zip(prob_list, acc_list)]
 
     return acc_list, gap_list, count_list
+
+
+def error_vector_uniform(prob_list, label_list, **kwargs):
+    """
+    :param prob_list: list, float
+    :param label_list: list, float
+    :return:
+    """
+    assert len(prob_list) == len(label_list)
+
+    prob_array = np.array(prob_list)
+    label_array = np.array(label_list)
+    value_array = label_array - prob_array
+
+    bins = kwargs.get("bins") or 20
+    bin_width = 1.0 / bins
+    list_len = len(prob_list)
+    err_vector = np.zeros(bins)
+    count_vector = np.zeros(bins)
+    prob_vector = np.zeros(bins)
+    for i in range(bins):
+        lower_bound = i * bin_width
+        upper_bound = (i + 1) * bin_width
+        if i < bins - 1:
+            cond = (prob_array >= lower_bound) & (prob_array < upper_bound)
+        else:
+            cond = (prob_array >= lower_bound)
+        for j in range(list_len):
+            if cond[j]:
+                err_vector[i] += value_array[j]
+                prob_vector[i] += prob_array[j]
+                count_vector[i] += 1
+
+    assert list_len == np.sum(count_vector)
+
+    hit_vector = err_vector + prob_vector
+
+    return err_vector, hit_vector, prob_vector, count_vector

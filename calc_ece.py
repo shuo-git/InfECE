@@ -36,12 +36,14 @@ def main(args):
     elif args.partition == "balanced":
         err_mtrx, hit_mtrx, _, count_mtrx, _ = error_matrix_balanced(prob, trans, float_label, vocab, bins=args.bins)
 
-    ece = calculate_ece(err_mtrx, count_mtrx)
+    abs_ece = calculate_ece(err_mtrx, count_mtrx) * 100
     # token_ece = calculate_token_ece(err_mtrx, count_mtrx)
-    sharp = calculate_sharpness(hit_mtrx, count_mtrx)
-    var_gap = calculate_sharpness(err_mtrx, count_mtrx)
+    # rel_ece = np.sqrt(calculate_sharpness(err_mtrx, count_mtrx)) * 100
+    # sharp = np.sqrt(calculate_sharpness(hit_mtrx, count_mtrx)) * 100
+    # ppl = np.exp(np.mean([-np.log(p) for p in prob]))
 
-    print("{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}\t{:.4f}".format(ece, sharp, var_gap, np.mean(prob), np.mean(float_label)))
+    # print("{:.2f}\t{:.2f}\t{:.2f}\t{:.4f}\t{:.4f}\t{:.2f}".format(abs_ece, rel_ece, sharp, np.mean(prob), np.mean(float_label), ppl))
+    print("{:.2f}\t{:.4f}".format(abs_ece, np.mean(prob)))
 
 
 if __name__ == '__main__':
