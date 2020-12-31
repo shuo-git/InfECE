@@ -61,6 +61,8 @@ def main(args):
     refs = file2words(args.ref)
     probs = file2words(args.prob)
     probs = [[float(x) for x in l] for l in probs]
+    if len(probs[0]) > len(hyps[0]):
+        probs = [l[:-1] for l in probs]
     # probs = [[np.exp(float(x)) for x in l] for l in probs]
     all_labels_list = []
     for hyp, ref in zip(hyps, refs):
@@ -112,12 +114,12 @@ def main(args):
     # avg_prob.append(aggregate_avg_prob1)
     # avg_prob.append(aggregate_avg_prob2)
 
-    # abs_ece = ['{:.2f}'.format(s) for s in abs_ece]
-    # rel_ece = ['{:.2f}'.format(s) for s in rel_ece]
-    # sharp = ['{:.2f}'.format(s) for s in sharp]
-    # avg_prob = ['{:.4f}'.format(s) for s in avg_prob]
-    print('{:.2f}'.format(abs_ece[-1]))
-    # print(' '.join(abs_ece) + '\t' + ' '.join(rel_ece) + '\t' + ' '.join(sharp) + '\t' + ' '.join(avg_prob))
+    abs_ece = ['{:.2f}'.format(s) for s in abs_ece]
+    rel_ece = ['{:.2f}'.format(s) for s in rel_ece]
+    sharp = ['{:.2f}'.format(s) for s in sharp]
+    avg_prob = ['{:.4f}'.format(s) for s in avg_prob]
+    # print('{:.2f}'.format(abs_ece[-1]))
+    print(' '.join(abs_ece) + '\t' + ' '.join(rel_ece) + '\t' + ' '.join(sharp) + '\t' + ' '.join(avg_prob))
 
 
 if __name__ == '__main__':
